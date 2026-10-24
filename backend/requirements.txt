@@ -1,0 +1,9 @@
+# Versions = Kaggle training environment (config.json) se match
+tensorflow==2.20.0
+keras==3.13.2
+mtcnn==1.0.0
+fastapi
+uvicorn[standard]
+python-multipart
+opencv-python-headless
+numpy
