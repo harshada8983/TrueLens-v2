@@ -4,7 +4,7 @@ import { Upload, ShieldCheck, AlertTriangle, Terminal, Image as ImageIcon, Video
 
 // Configurable via .env (VITE_API_URL) so the frontend can point at a local
 // ngrok tunnel during development or a permanently deployed backend (e.g. Render) in production.
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://pry-mandarin-unsoiled.ngrok-free.dev';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 function App() {
   // --- Re-engineered Splash Screen Sequencer ---
@@ -126,7 +126,15 @@ function App() {
     }
   };
 
+    const TONE = {
+    REAL:        { text: 'text-emerald-400', box: 'bg-emerald-500/10 border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)]', icon: 'text-emerald-400' },
+    UNCERTAIN:   { text: 'text-amber-400',   box: 'bg-amber-500/10 border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.2)]',  icon: 'text-amber-400' },
+    MANIPULATED: { text: 'text-red-500',     box: 'bg-red-500/10 border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.2)]',     icon: 'text-red-400' },
+  };
+  const tone = TONE[result?.prediction] || TONE.MANIPULATED;
+
   return (
+    
     <div className="min-h-screen bg-darkBase text-gray-200 font-sans selection:bg-blue-500/30 relative overflow-hidden w-full">
 
       {/* --- Re-engineered Cinematic Splash Screen --- */}
@@ -289,18 +297,13 @@ function App() {
                 <div className="z-10 transition-opacity duration-500">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-5">
-                      {result.prediction === 'REAL' ? (
-                        <div className="bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                          <ShieldCheck className="text-emerald-400 drop-shadow-md" size={48} />
+                      <div className={`p-4 rounded-xl border ${tone.box}`}>
+                        {result.prediction === 'REAL'
+                            ? <ShieldCheck className={`${tone.icon} drop-shadow-md`} size={48} />
+                            : <AlertTriangle className={`${tone.icon} drop-shadow-md`} size={48} />}
                         </div>
-                      ) : (
-                        <div className="bg-red-500/10 p-4 rounded-xl border border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-                          <AlertTriangle className="text-red-400 drop-shadow-md" size={48} />
-                        </div>
-                      )}
-                      <div>
                         <p className="text-xs text-gray-400 uppercase tracking-widest mb-1 font-semibold">Final Verdict</p>
-                        <h2 className={`text-4xl font-black tracking-tight drop-shadow-lg ${result.prediction === 'REAL' ? 'text-emerald-400' : 'text-red-500'}`}>
+                        <h2 className={`text-4xl font-black tracking-tight drop-shadow-lg ${tone.text}`}>
                           {result.prediction}
                         </h2>
                       </div>
@@ -343,7 +346,7 @@ function App() {
                 <div className="text-gray-500 mb-6 border-b border-white/5 pb-4 font-light text-[12px]">
                   [ TrueLens Architecture v1.0.4 ]<br />
                   [ Backend: FastAPI / Machine Learning: EfficientNetB0 ]<br />
-                  [ VPC_ISOLATION: ACTIVE / REGION: US-EAST-1 ]<br />
+                  [ Face Detector: MTCNN / Hosted on: Hugging Face Spaces ]<br />
                   Awaiting tensor matrix...
                 </div>
 
